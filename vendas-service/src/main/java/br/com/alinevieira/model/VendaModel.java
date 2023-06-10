@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.alinevieira.model.enums.VendaStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,11 +24,16 @@ public class VendaModel implements Serializable {
 	private UUID id;
 	private String cpfComprador;
 	private LocalDateTime data;
-	
+	private LocalDateTime dataPagamento;
+	private VendaStatus status;
+		
 	@OneToMany
 	private List<ProdutoModel> produtos;
 	
+	
 	public VendaModel() {
+		this.data = LocalDateTime.now(); 
+		this.status = VendaStatus.CRIADA;
 		this.produtos = new ArrayList<>();
 	}
 	
@@ -61,5 +67,21 @@ public class VendaModel implements Serializable {
 	
 	public void setProdutos(List<ProdutoModel> produtos) {
 		this.produtos = produtos;
+	}
+
+	public VendaStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(VendaStatus status) {
+		this.status = status;
+	}
+
+	public LocalDateTime getDataPagamento() {
+		return dataPagamento;
+	}
+
+	public void setDataPagamento(LocalDateTime dataPagamento) {
+		this.dataPagamento = dataPagamento;
 	}
 }
