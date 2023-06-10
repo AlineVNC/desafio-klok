@@ -1,0 +1,1 @@
+ALTER TABLE public.tb_venda ADD cpf_comprador varchar NOT NULL

@@ -20,6 +20,7 @@ public class VendaModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
+	private String cpfComprador;
 	private LocalDateTime data;
 	
 	@OneToMany
@@ -31,6 +32,14 @@ public class VendaModel implements Serializable {
 	
 	public void setId(UUID id) {
 		this.id = id;
+	}
+	
+	public String getCpfComprador() {
+		return cpfComprador;
+	}
+	
+	public void setCpfComprador(String cpfComprador) {
+		this.cpfComprador = cpfComprador;
 	}
 	
 	public LocalDateTime getData() {
