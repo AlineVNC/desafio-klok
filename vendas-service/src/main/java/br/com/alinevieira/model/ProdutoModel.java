@@ -19,6 +19,10 @@ public class ProdutoModel {
 	private String name;
 	private BigDecimal preco;
 	
+	public UUID getId() {
+		return id;
+	}
+	
 	public String getName() {
 		return name;
 	}
