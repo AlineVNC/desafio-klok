@@ -1,6 +1,7 @@
 package br.com.alinevieira.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,12 @@ public class VendaController {
 	@Autowired
 	VendaRepository vendaRepository;
 	
+	public ResponseEntity<List<VendaModel>> listarVendas() {
+		List<VendaModel> vendas = vendaRepository.findAll();
+		ResponseEntity<List<VendaModel>> response = ResponseEntity.ok(vendas);
+		return response; 
+	}
+	
 	@PostMapping("/vendas")
 	public ResponseEntity<VendaModel> criaVenda(@RequestBody @Valid VendaDto vendaDto) {
 		VendaModel venda = new VendaModel();
@@ -30,5 +37,4 @@ public class VendaController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(venda);
 	}
-	
 }
