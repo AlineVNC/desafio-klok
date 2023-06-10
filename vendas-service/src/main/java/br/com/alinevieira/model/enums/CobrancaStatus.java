@@ -1,4 +1,4 @@
-package br.com.alinevieira.model;
+package br.com.alinevieira.model.enums;
 
 public enum CobrancaStatus {
 	
