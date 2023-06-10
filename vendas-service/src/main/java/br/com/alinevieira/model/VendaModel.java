@@ -2,6 +2,7 @@ package br.com.alinevieira.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,10 @@ public class VendaModel implements Serializable {
 	
 	@OneToMany
 	private List<ProdutoModel> produtos;
+	
+	public VendaModel() {
+		this.produtos = new ArrayList<>();
+	}
 	
 	public UUID getId() {
 		return id;
