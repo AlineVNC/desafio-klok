@@ -16,19 +16,23 @@ public class ProdutoModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
-	private String name;
+	private String nome;
 	private BigDecimal preco;
 	
 	public UUID getId() {
 		return id;
 	}
 	
-	public String getName() {
-		return name;
+	public void setId(UUID id) {
+		this.id = id;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public String getNome() {
+		return nome;
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 	
 	public BigDecimal getPreco() {
