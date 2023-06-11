@@ -1,6 +1,7 @@
 package br.com.alinevieira.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.UUID;
 
 import br.com.alinevieira.model.enums.VendaStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,16 +28,18 @@ public class VendaModel implements Serializable {
 	private String cpfComprador;
 	private LocalDateTime data;
 	private LocalDateTime dataPagamento;
+	
+	@Enumerated(EnumType.STRING)
 	private VendaStatus status;
 		
-	@OneToMany
-	private List<ProdutoModel> produtos;
+	@OneToMany(mappedBy = "venda")
+	private List<ItemModel> items;
 	
 	
 	public VendaModel() {
 		this.data = LocalDateTime.now(); 
 		this.status = VendaStatus.CRIADA;
-		this.produtos = new ArrayList<>();
+		this.items = new ArrayList<>();
 	}
 	
 	public UUID getId() {
@@ -61,12 +66,12 @@ public class VendaModel implements Serializable {
 		this.data = data;
 	}
 	
-	public List<ProdutoModel> getProdutos() {
-		return produtos;
+	public List<ItemModel> getItems() {
+		return items;
 	}
 	
-	public void setProdutos(List<ProdutoModel> produtos) {
-		this.produtos = produtos;
+	public void setItems(List<ItemModel> items) {
+		this.items = items;
 	}
 
 	public VendaStatus getStatus() {
@@ -83,5 +88,15 @@ public class VendaModel implements Serializable {
 
 	public void setDataPagamento(LocalDateTime dataPagamento) {
 		this.dataPagamento = dataPagamento;
+	}
+	
+	public BigDecimal getTotal() {
+		BigDecimal total = new BigDecimal(0);
+		for (ItemModel item : this.items) {
+			BigDecimal itemSubTotal = item.getSubTotal();
+			total = total.add(itemSubTotal);
+		}
+		
+		return total;		
 	}
 }
