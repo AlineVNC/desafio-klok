@@ -46,7 +46,6 @@ public class VendaController {
 	public ResponseEntity<VendaResponseDto> criaVenda(@RequestBody @Valid VendaDto vendaDto) {
 		VendaModel venda = new VendaModel();
 		venda.setCpfComprador(vendaDto.cpfComprador());
-		venda.setData(LocalDateTime.now());
 		venda = vendaRepository.save(venda);
 		
 		if (vendaDto.items() != null) {
