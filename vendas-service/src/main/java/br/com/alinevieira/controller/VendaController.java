@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alinevieira.dtos.ItemDto;
+import br.com.alinevieira.dtos.QuantidadeItemDto;
 import br.com.alinevieira.dtos.VendaDto;
 import br.com.alinevieira.dtos.VendaResponseDto;
 import br.com.alinevieira.model.ItemModel;
@@ -106,6 +108,51 @@ public class VendaController {
 		VendaResponseDto vendaResponse = VendaResponseDto.fromModel(venda);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(vendaResponse);
+	}
+	
+	@PostMapping("/{id}/itens")
+	public ResponseEntity<Object> adicionarItem(@PathVariable(name = "id") UUID idVenda, @RequestBody @Valid ItemDto itemDto) {
+		Optional<VendaModel> optionalVenda = vendaRepository.findById(idVenda);
+		Optional<ProdutoModel> optionalProduto = produtoRepository.findById(itemDto.produto_id());
+		if(optionalVenda.isPresent() && optionalProduto.isPresent()) {
+			VendaModel venda = optionalVenda.get();
+			ProdutoModel produto = optionalProduto.get();
+			ItemModel item = new ItemModel();
+			item.setPrecoPraticado(produto.getPreco());
+			item.setProduto(produto);
+			item.setVenda(venda);
+			item.setQuantidade(itemDto.quantidade());
+			
+			itemRepository.save(item);
+			
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+			
+		} else {
+			return ResponseEntity.notFound().build();
+		}		
+	}
+	
+	@PatchMapping("/{idVenda}/itens/{idItem}")
+	public ResponseEntity<Object> alterarQuantidadeItem(
+			@PathVariable UUID idVenda, 
+			@PathVariable UUID idItem, 
+			@RequestBody @Valid QuantidadeItemDto quantidadeDto
+			) {
+		Optional<ItemModel> optItem = itemRepository.findById(idItem);
+		if(optItem.isPresent()) {
+			ItemModel item = optItem.get();
+			
+			if(!item.getVenda().getId().equals(idVenda)) {
+				return ResponseEntity.badRequest().body("Item não pertence a esta venda.");
+			}			
+			
+			item.setQuantidade(quantidadeDto.quantidade());
+			itemRepository.save(item);
+			
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	@DeleteMapping("/{id}")
