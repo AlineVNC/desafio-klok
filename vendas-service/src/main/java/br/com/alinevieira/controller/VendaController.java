@@ -1,6 +1,5 @@
 package br.com.alinevieira.controller;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,11 +22,11 @@ import br.com.alinevieira.dtos.QuantidadeItemDto;
 import br.com.alinevieira.dtos.VendaDto;
 import br.com.alinevieira.dtos.VendaResponseDto;
 import br.com.alinevieira.model.ItemModel;
-import br.com.alinevieira.model.ProdutoModel;
 import br.com.alinevieira.model.VendaModel;
 import br.com.alinevieira.repository.ItemRepository;
 import br.com.alinevieira.repository.ProdutoRepository;
 import br.com.alinevieira.repository.VendaRepository;
+import br.com.alinevieira.services.VendaService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -42,6 +41,9 @@ public class VendaController {
 	
 	@Autowired
 	ItemRepository itemRepository;
+	
+	@Autowired
+	VendaService vendaService;
 	
 	@GetMapping
 	public ResponseEntity<List<VendaResponseDto>> listarVendas() {
@@ -73,37 +75,7 @@ public class VendaController {
 	
 	@PostMapping
 	public ResponseEntity<VendaResponseDto> criaVenda(@RequestBody @Valid VendaDto vendaDto) {
-		VendaModel venda = new VendaModel();
-		venda.setCpfComprador(vendaDto.cpfComprador());
-		venda = vendaRepository.save(venda);
-		
-		if (vendaDto.items() != null) {
-			for (ItemDto itemDto : vendaDto.items()) {		
-				
-				UUID idProduto = itemDto.produto_id();
-				Optional<ProdutoModel> optProdutoModel = produtoRepository.findById(idProduto);
-				
-				if (optProdutoModel.isPresent()) {
-					ItemModel itemModel = new ItemModel();
-					
-					ProdutoModel produtoModel = optProdutoModel.get();					
-					itemModel.setProduto(produtoModel);
-					
-					BigDecimal preco = produtoModel.getPreco();
-					itemModel.setPrecoPraticado(preco);
-					
-					int quantidade = itemDto.quantidade();
-					itemModel.setQuantidade(quantidade);
-					
-					itemModel.setVenda(venda);
-					
-					itemModel = itemRepository.save(itemModel);
-					
-					venda.getItems().add(itemModel);					
-				}
-				
-			}
-		}
+		VendaModel venda = vendaService.criaVenda(vendaDto);
 		
 		VendaResponseDto vendaResponse = VendaResponseDto.fromModel(venda);
 		
@@ -112,19 +84,9 @@ public class VendaController {
 	
 	@PostMapping("/{id}/itens")
 	public ResponseEntity<Object> adicionarItem(@PathVariable(name = "id") UUID idVenda, @RequestBody @Valid ItemDto itemDto) {
-		Optional<VendaModel> optionalVenda = vendaRepository.findById(idVenda);
-		Optional<ProdutoModel> optionalProduto = produtoRepository.findById(itemDto.produto_id());
-		if(optionalVenda.isPresent() && optionalProduto.isPresent()) {
-			VendaModel venda = optionalVenda.get();
-			ProdutoModel produto = optionalProduto.get();
-			ItemModel item = new ItemModel();
-			item.setPrecoPraticado(produto.getPreco());
-			item.setProduto(produto);
-			item.setVenda(venda);
-			item.setQuantidade(itemDto.quantidade());
-			
-			itemRepository.save(item);
-			
+		ItemModel item = vendaService.adicionarItem(idVenda, itemDto);
+		
+		if(item != null) {			
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 			
 		} else {
@@ -138,21 +100,10 @@ public class VendaController {
 			@PathVariable UUID idItem, 
 			@RequestBody @Valid QuantidadeItemDto quantidadeDto
 			) {
-		Optional<ItemModel> optItem = itemRepository.findById(idItem);
-		if(optItem.isPresent()) {
-			ItemModel item = optItem.get();
-			
-			if(!item.getVenda().getId().equals(idVenda)) {
-				return ResponseEntity.badRequest().body("Item não pertence a esta venda.");
-			}			
-			
-			item.setQuantidade(quantidadeDto.quantidade());
-			itemRepository.save(item);
-			
-			return ResponseEntity.ok().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		
+		vendaService.alterarQuantidade(idVenda, idItem, quantidadeDto);			
+		return ResponseEntity.ok().build();
+		
 	}
 	
 	@DeleteMapping("/{id}")
