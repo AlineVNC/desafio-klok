@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+  vendas-db:
+    image: postgres:15.3
+    container_name: vendas-postgres    
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: vendas-db
+    volumes:
+      - vendas-service-db:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432
+    networks:
+      - padrao
+
+  vendas-service:
+    container_name: vendas-service
+    image: openjdk:17-alpine
+    ports:
+      - "8010:8080"
+    environment:
+      REGISTRY_PREFER_IP: 'true'
+      APPLICATION_NAME: vendas-service
+      SPRING_PROFILES_ACTIVE: 'prod'
+    command: java -Duser.timezone=GMT-03:00 -Xmx256m -Xmx184m -jar /services/vendas-service.jar
+    volumes:
+      - ./../vendas-service/target/vendas-service.jar:/services/vendas-service.jar
+    networks:
+      - padrao
+    links:
+      - rabbitmq
+      - vendas-db
+    
+
+networks:
+  padrao:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  vendas-service-db:
