@@ -82,7 +82,7 @@ public class VendaController {
 		List<CobrancaModel> cobrancas = cobrancaRepository.getAllByVendaId(idVenda);
 		List<CobrancaResponseDto> cobrancasResponse = new ArrayList<>();
 		for (CobrancaModel cobranca : cobrancas) {
-			CobrancaResponseDto cobrancaResponseDto = new CobrancaResponseDto(cobranca.getId(), cobranca.getValor(), cobranca.getStatus(), cobranca.getDataCriacao(), cobranca.getDataPagamento());
+			CobrancaResponseDto cobrancaResponseDto = CobrancaResponseDto.fromModel(cobranca);
 			cobrancasResponse.add(cobrancaResponseDto);
 			
 		}
