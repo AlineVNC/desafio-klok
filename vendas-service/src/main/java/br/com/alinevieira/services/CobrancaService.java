@@ -2,7 +2,11 @@ package br.com.alinevieira.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import br.com.alinevieira.model.CobrancaModel;
@@ -14,7 +18,8 @@ import br.com.alinevieira.repository.VendaRepository;
 import jakarta.transaction.Transactional;
 
 @Service
-public class CobrancaService {
+public class CobrancaService {	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	private final CobrancaRepository cobrancaRepository;
 	private final VendaRepository vendaRepository;
@@ -48,5 +53,29 @@ public class CobrancaService {
 			vendaModel.setStatus(VendaStatus.COBRANCA_GERADA);
 			vendaRepository.save(vendaModel);
 		}				
-	}	
+	}
+	
+	@Transactional
+	public void processaPagamento(UUID vendaId, UUID cobrancaId) {
+		Optional<CobrancaModel> optCobranca = cobrancaRepository.findById(cobrancaId);
+		
+		if(optCobranca.isPresent()) {
+			CobrancaModel cobranca = optCobranca.get();
+			if(!cobranca.getVenda().getId().equals(vendaId)) {
+				log.error("Cobrança não pertence a venda informada. Id " + cobranca);				
+			} else {
+				VendaModel venda = cobranca.getVenda();
+				venda.setStatus(VendaStatus.PAGA);
+				vendaRepository.save(venda);
+				
+				cobranca.setStatus(CobrancaStatus.PAGO);
+				cobrancaRepository.save(cobranca);
+				
+				log.info("Cobranca: " + cobrancaId + "\nPagamento realizado.");
+				
+			}
+		} else {
+			log.error("Cobrança não existe. Id: " + cobrancaId);
+		}		
+	}
 }
