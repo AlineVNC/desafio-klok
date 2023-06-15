@@ -6,9 +6,13 @@ import java.util.UUID;
 
 import br.com.alinevieira.model.enums.CobrancaStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,19 +22,33 @@ public class CobrancaModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
-	private LocalDateTime data;
+	
+	@ManyToOne
+	@JoinColumn(name="venda_id", nullable=false)
+	private VendaModel venda;
 	private BigDecimal valor;
+	
+	@Enumerated(EnumType.STRING)
 	private CobrancaStatus status;
+	private LocalDateTime dataCriacao;
 	private LocalDateTime dataPagamento;
 	
-	public LocalDateTime getData() {
-		return data;
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
 	}
 	
-	public void setData(LocalDateTime data) {
-		this.data = data;
+	public VendaModel getVenda() {
+		return venda;
 	}
-	
+
+	public void setVenda(VendaModel venda) {
+		this.venda = venda;
+	}
+
 	public BigDecimal getValor() {
 		return valor;
 	}
@@ -45,6 +63,14 @@ public class CobrancaModel {
 	
 	public void setStatus(CobrancaStatus status) {
 		this.status = status;
+	}
+	
+	public LocalDateTime getDataCriacao() {
+		return dataCriacao;
+	}
+	
+	public void setDataCriacao(LocalDateTime dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 	
 	public LocalDateTime getDataPagamento() {

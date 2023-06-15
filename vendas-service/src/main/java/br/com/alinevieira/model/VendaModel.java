@@ -35,11 +35,14 @@ public class VendaModel implements Serializable {
 	@OneToMany(mappedBy = "venda")
 	private List<ItemModel> items;
 	
+	@OneToMany(mappedBy = "venda")
+	private List<CobrancaModel> cobrancas;
 	
 	public VendaModel() {
 		this.data = LocalDateTime.now(); 
 		this.status = VendaStatus.CRIADA;
 		this.items = new ArrayList<>();
+		this.cobrancas = new ArrayList<>();
 	}
 	
 	public UUID getId() {

@@ -26,6 +26,7 @@ public class ItemModel {
 	@ManyToOne
 	@JoinColumn(name="produto_id", nullable=false)
 	private ProdutoModel produto;
+	
 	private int quantidade;
 	private BigDecimal precoPraticado;
 	
