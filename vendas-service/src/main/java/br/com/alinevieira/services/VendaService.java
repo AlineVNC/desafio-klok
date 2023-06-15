@@ -15,6 +15,7 @@ import br.com.alinevieira.exception.NotFoundException;
 import br.com.alinevieira.model.ItemModel;
 import br.com.alinevieira.model.ProdutoModel;
 import br.com.alinevieira.model.VendaModel;
+import br.com.alinevieira.model.enums.VendaStatus;
 import br.com.alinevieira.repository.ItemRepository;
 import br.com.alinevieira.repository.ProdutoRepository;
 import br.com.alinevieira.repository.VendaRepository;
@@ -70,7 +71,7 @@ public class VendaService {
 	}
 	
 	@Transactional
-	public ItemModel adicionarItem(UUID idVenda, ItemDto itemDto) {
+	public VendaModel adicionarItem(UUID idVenda, ItemDto itemDto) {
 		Optional<VendaModel> optionalVenda = vendaRepository.findById(idVenda);
 		Optional<ProdutoModel> optionalProduto = produtoRepository.findById(itemDto.produto_id());
 		if(optionalVenda.isPresent() && optionalProduto.isPresent()) {
@@ -84,7 +85,10 @@ public class VendaService {
 			
 			item = itemRepository.save(item);
 			
-			return item;
+			venda.setStatus(VendaStatus.ALTERADA);
+			venda = vendaRepository.save(venda);
+			
+			return venda;
 			
 		} else {
 			throw new NotFoundException("Venda ou Item não encontrado.");

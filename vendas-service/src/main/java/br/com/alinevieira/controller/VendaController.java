@@ -21,7 +21,6 @@ import br.com.alinevieira.dtos.ItemDto;
 import br.com.alinevieira.dtos.QuantidadeItemDto;
 import br.com.alinevieira.dtos.VendaDto;
 import br.com.alinevieira.dtos.VendaResponseDto;
-import br.com.alinevieira.model.ItemModel;
 import br.com.alinevieira.model.VendaModel;
 import br.com.alinevieira.repository.ItemRepository;
 import br.com.alinevieira.repository.ProdutoRepository;
@@ -83,15 +82,13 @@ public class VendaController {
 	}
 	
 	@PostMapping("/{id}/itens")
-	public ResponseEntity<Object> adicionarItem(@PathVariable(name = "id") UUID idVenda, @RequestBody @Valid ItemDto itemDto) {
-		ItemModel item = vendaService.adicionarItem(idVenda, itemDto);
+	public ResponseEntity<VendaResponseDto> adicionarItem(@PathVariable(name = "id") UUID idVenda, @RequestBody @Valid ItemDto itemDto) {
+		VendaModel venda = vendaService.adicionarItem(idVenda, itemDto);
 		
-		if(item != null) {			
-			return ResponseEntity.status(HttpStatus.CREATED).build();
-			
-		} else {
-			return ResponseEntity.notFound().build();
-		}		
+		VendaResponseDto vendaResponse = VendaResponseDto.fromModel(venda);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(vendaResponse);
+		
 	}
 	
 	@PatchMapping("/{idVenda}/itens/{idItem}")
