@@ -69,6 +69,7 @@ public class CobrancaService {
 				vendaRepository.save(venda);
 				
 				cobranca.setStatus(CobrancaStatus.PAGO);
+				cobranca.setDataPagamento(LocalDateTime.now());
 				cobrancaRepository.save(cobranca);
 				
 				log.info("Cobranca: " + cobrancaId + "\nPagamento realizado.");

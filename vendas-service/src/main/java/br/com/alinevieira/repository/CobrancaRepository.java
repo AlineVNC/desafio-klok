@@ -13,5 +13,6 @@ import br.com.alinevieira.model.enums.CobrancaStatus;
 public interface CobrancaRepository extends JpaRepository<CobrancaModel, UUID> {
 	
 	List<CobrancaModel> getAllByVendaIdAndStatus(UUID vendaId, CobrancaStatus status); 
-
+	
+	List<CobrancaModel> getAllByVendaId(UUID vendaId);
 }

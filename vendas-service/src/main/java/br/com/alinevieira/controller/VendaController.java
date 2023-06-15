@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.alinevieira.dtos.CobrancaResponseDto;
 import br.com.alinevieira.dtos.ItemDto;
 import br.com.alinevieira.dtos.QuantidadeItemDto;
 import br.com.alinevieira.dtos.VendaDto;
 import br.com.alinevieira.dtos.VendaResponseDto;
+import br.com.alinevieira.model.CobrancaModel;
 import br.com.alinevieira.model.VendaModel;
+import br.com.alinevieira.repository.CobrancaRepository;
 import br.com.alinevieira.repository.ItemRepository;
 import br.com.alinevieira.repository.ProdutoRepository;
 import br.com.alinevieira.repository.VendaRepository;
@@ -40,6 +43,9 @@ public class VendaController {
 	
 	@Autowired
 	ItemRepository itemRepository;
+	
+	@Autowired
+	CobrancaRepository cobrancaRepository;
 	
 	@Autowired
 	VendaService vendaService;
@@ -69,6 +75,18 @@ public class VendaController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+	
+	@GetMapping("/{id}/cobrancas")
+	public ResponseEntity<List<CobrancaResponseDto>> pegarCobrancas(@PathVariable(name = "id") UUID idVenda) {
+		List<CobrancaModel> cobrancas = cobrancaRepository.getAllByVendaId(idVenda);
+		List<CobrancaResponseDto> cobrancasResponse = new ArrayList<>();
+		for (CobrancaModel cobranca : cobrancas) {
+			CobrancaResponseDto cobrancaResponseDto = new CobrancaResponseDto(cobranca.getId(), cobranca.getValor(), cobranca.getStatus(), cobranca.getDataCriacao(), cobranca.getDataPagamento());
+			cobrancasResponse.add(cobrancaResponseDto);
+			
+		}
+		return ResponseEntity.ok(cobrancasResponse);
 	}
 	
 	
