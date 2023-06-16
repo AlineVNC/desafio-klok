@@ -1,6 +1,5 @@
 package br.com.alinevieira.controller;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.alinevieira.dtos.PagamentoDto;
 import br.com.alinevieira.dtos.PagamentoResponseDto;
 import br.com.alinevieira.model.PagamentoModel;
-import br.com.alinevieira.model.enums.PagamentoStatus;
 import br.com.alinevieira.repository.PagamentoRepository;
+import br.com.alinevieira.services.PagamentoService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,14 +28,17 @@ import jakarta.validation.Valid;
 public class PagamentoController {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
-	PagamentoRepository pagamentoRepository;
+	private final PagamentoRepository pagamentoRepository;
+	private final PagamentoService pagamentoService;
 	
-	public PagamentoController(PagamentoRepository pagamentoRepository) {
+	public PagamentoController(PagamentoRepository pagamentoRepository, PagamentoService pagamentoService) {
 		this.pagamentoRepository = pagamentoRepository;
+		this.pagamentoService = pagamentoService;
 	}
 	
 	@GetMapping
 	public ResponseEntity<List<PagamentoResponseDto>> listarPagamentos() {
+		log.info("Listando todos os pagamentos...");
 		List<PagamentoModel> pagamentos = pagamentoRepository.findAll();
 		List<PagamentoResponseDto> pagamentosResponse = new ArrayList<>();
 		for(PagamentoModel pagamento : pagamentos) {
@@ -49,6 +51,7 @@ public class PagamentoController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<PagamentoResponseDto> pegarPagamentoPorId(@PathVariable UUID id) {
+		log.info("Consultando pagamento de id " + id);
 		Optional<PagamentoModel> optPagamento = pagamentoRepository.findById(id);
 		if(optPagamento.isPresent()) {
 			PagamentoModel pagamento = optPagamento.get();
@@ -63,15 +66,8 @@ public class PagamentoController {
 	
 	@PostMapping
 	public ResponseEntity<PagamentoResponseDto> lancaPagamento(@RequestBody @Valid PagamentoDto pagamentoDto) {
-		PagamentoModel pagamento = new PagamentoModel();
-		pagamento.setCpfPagador(pagamentoDto.cpfPagador());
-		pagamento.setDataCriacao(LocalDateTime.now());
-		pagamento.setStatus(PagamentoStatus.LANCADO);
-		pagamento.setTipo(pagamentoDto.tipo());
-		pagamento.setValor(pagamentoDto.valor());
-		
-		pagamento = pagamentoRepository.save(pagamento);
-		
+		PagamentoModel pagamento = pagamentoService.cadastrarPagamento(pagamentoDto);
+			
 		PagamentoResponseDto pagamentoResponse = PagamentoResponseDto.fromModel(pagamento);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(pagamentoResponse);
