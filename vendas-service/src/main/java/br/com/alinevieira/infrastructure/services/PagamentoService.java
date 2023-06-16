@@ -21,8 +21,6 @@ public class PagamentoService {
 		this.cobrancaService = cobrancaService;
 	}
 
-
-
 	@RabbitListener(queues = Amqp.QUEUE_NAME)
     public void receive(final PagamentoRequestTO pagamentoRequest) {
         try {

@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import br.com.alinevieira.dtos.ItemDto;
@@ -23,18 +24,25 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class VendaService {
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
 	VendaRepository vendaRepository;
-	
-	@Autowired
 	ProdutoRepository produtoRepository;
-	
-	@Autowired
 	ItemRepository itemRepository;
 	
+	public VendaService(
+			VendaRepository vendaRepository, 
+			ProdutoRepository produtoRepository,
+			ItemRepository itemRepository
+			) {
+		this.vendaRepository = vendaRepository;
+		this.produtoRepository = produtoRepository;
+		this.itemRepository = itemRepository;
+	}
+
 	@Transactional
 	public VendaModel criaVenda(VendaDto vendaDto) {
+		log.info("Cadastrando venda para o comprador de CPF: " + vendaDto.cpfComprador());
 		VendaModel venda = new VendaModel();
 		venda.setCpfComprador(vendaDto.cpfComprador());
 		venda = vendaRepository.save(venda);
@@ -72,6 +80,7 @@ public class VendaService {
 	
 	@Transactional
 	public VendaModel adicionarItem(UUID idVenda, ItemDto itemDto) {
+		log.info("Adicionando item a venda de id: " + idVenda + "\nProduto id: " + itemDto.produto_id() + "\nQuantidade: " + itemDto.quantidade());
 		Optional<VendaModel> optionalVenda = vendaRepository.findById(idVenda);
 		Optional<ProdutoModel> optionalProduto = produtoRepository.findById(itemDto.produto_id());
 		if(optionalVenda.isPresent() && optionalProduto.isPresent()) {
@@ -97,6 +106,7 @@ public class VendaService {
 	
 	@Transactional
 	public ItemModel alterarQuantidade(UUID idVenda, UUID idItem, QuantidadeItemDto quantidadeDto) {
+		log.info("Venda: " + idVenda + "\nAlterando a quantidade do item de id: " + idItem + " para " + quantidadeDto.quantidade() + ".");
 		Optional<ItemModel> optItem = itemRepository.findById(idItem);
 		if(optItem.isPresent()) {
 			ItemModel item = optItem.get();

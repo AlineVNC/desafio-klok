@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,25 +34,32 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/vendas")
-public class VendaController {
+public class VendaController {	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
 	VendaRepository vendaRepository;
-	
-	@Autowired
 	ProdutoRepository produtoRepository;
-	
-	@Autowired
 	ItemRepository itemRepository;
-	
-	@Autowired
 	CobrancaRepository cobrancaRepository;
-	
-	@Autowired
 	VendaService vendaService;
 	
+	public VendaController(
+			VendaRepository vendaRepository, 
+			ProdutoRepository produtoRepository,
+			ItemRepository itemRepository, 
+			CobrancaRepository cobrancaRepository, 
+			VendaService vendaService
+			) {
+		this.vendaRepository = vendaRepository;
+		this.produtoRepository = produtoRepository;
+		this.itemRepository = itemRepository;
+		this.cobrancaRepository = cobrancaRepository;
+		this.vendaService = vendaService;
+	}
+
 	@GetMapping
 	public ResponseEntity<List<VendaResponseDto>> listarVendas() {
+		log.info("Listando vendas...");
 		List<VendaModel> vendas = vendaRepository.findAll();
 		
 		List<VendaResponseDto> vendasResponse = new ArrayList<>();
@@ -66,6 +74,7 @@ public class VendaController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<VendaResponseDto> pegarVendaPorId(@PathVariable(value="id") UUID id) {
+		log.info("Consultando venda de Id: " + id);
 		Optional<VendaModel> optVenda = vendaRepository.findById(id);
 		if (optVenda.isPresent()) {
 			VendaModel venda = optVenda.get();
@@ -79,6 +88,8 @@ public class VendaController {
 	
 	@GetMapping("/{id}/cobrancas")
 	public ResponseEntity<List<CobrancaResponseDto>> pegarCobrancas(@PathVariable(name = "id") UUID idVenda) {
+		log.info("Consultando histórico de cobranças da venda de Id: " + idVenda);
+		
 		List<CobrancaModel> cobrancas = cobrancaRepository.getAllByVendaId(idVenda);
 		List<CobrancaResponseDto> cobrancasResponse = new ArrayList<>();
 		for (CobrancaModel cobranca : cobrancas) {
@@ -123,6 +134,7 @@ public class VendaController {
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deletarPorId(@PathVariable UUID id) {
+		log.info("Deletando venda de id: " + id);
 		boolean vendaExiste = vendaRepository.existsById(id);
 		if(vendaExiste) {
 			vendaRepository.deleteById(id);

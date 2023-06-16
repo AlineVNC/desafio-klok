@@ -25,7 +25,7 @@ public class CobrancaJob {
 
 	@Scheduled(cron = "${cobranca.cron}")
 	public void gerarCobrancas() {
-		log.info("Está rodando a cada 1s.");
+		log.info("Iniciando geração de cobranças.");
 		cobrancaService.gerarCobranca();
 	}
 }
