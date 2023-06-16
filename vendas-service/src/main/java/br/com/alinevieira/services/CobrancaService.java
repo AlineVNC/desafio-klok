@@ -3,12 +3,14 @@ package br.com.alinevieira.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import br.com.alinevieira.dtos.PagamentoRequestTO;
+import br.com.alinevieira.dtos.PagamentoResponseTO;
 import br.com.alinevieira.model.CobrancaModel;
 import br.com.alinevieira.model.VendaModel;
 import br.com.alinevieira.model.enums.CobrancaStatus;
@@ -23,10 +25,16 @@ public class CobrancaService {
 	
 	private final CobrancaRepository cobrancaRepository;
 	private final VendaRepository vendaRepository;
+	private final RabbitTemplate rabbitTemplate;
 
-	public CobrancaService(CobrancaRepository cobrancaRepository, VendaRepository vendaRepository) {
+	public CobrancaService(
+			CobrancaRepository cobrancaRepository, 
+			VendaRepository vendaRepository, 
+			RabbitTemplate rabbitTemplate
+			) {
 		this.cobrancaRepository = cobrancaRepository;
 		this.vendaRepository = vendaRepository;
+		this.rabbitTemplate = rabbitTemplate;
 	}
 	
 	@Transactional
@@ -56,13 +64,18 @@ public class CobrancaService {
 	}
 	
 	@Transactional
-	public void processaPagamento(UUID vendaId, UUID cobrancaId) {
-		Optional<CobrancaModel> optCobranca = cobrancaRepository.findById(cobrancaId);
+	public void processaPagamento(PagamentoRequestTO pagamentoRequest) {
+		Optional<CobrancaModel> optCobranca = cobrancaRepository.findOneByVendaIdAndStatus(pagamentoRequest.vendaId(), CobrancaStatus.EM_ABERTO);
 		
 		if(optCobranca.isPresent()) {
 			CobrancaModel cobranca = optCobranca.get();
-			if(!cobranca.getVenda().getId().equals(vendaId)) {
+			if(!cobranca.getVenda().getId().equals(pagamentoRequest.vendaId())) {
 				log.error("Cobrança não pertence a venda informada. Id " + cobranca);				
+			} else if (!pagamentoRequest.valor().equals(cobranca.getValor())) {
+				log.error("Valor do pagamento diferente da cobrança. Id " + cobranca);
+				
+				PagamentoResponseTO response = new PagamentoResponseTO(pagamentoRequest.pagamentoId(), false, "Valores divergentes");
+				rabbitTemplate.convertAndSend(response);
 			} else {
 				VendaModel venda = cobranca.getVenda();
 				venda.setStatus(VendaStatus.PAGA);
@@ -72,11 +85,16 @@ public class CobrancaService {
 				cobranca.setDataPagamento(LocalDateTime.now());
 				cobrancaRepository.save(cobranca);
 				
-				log.info("Cobranca: " + cobrancaId + "\nPagamento realizado.");
+				log.info("Cobranca: " + cobranca.getId() + "\nPagamento realizado.");
 				
+				PagamentoResponseTO response = new PagamentoResponseTO(pagamentoRequest.pagamentoId(), true, null);
+				rabbitTemplate.convertAndSend(response);				
 			}
 		} else {
-			log.error("Cobrança não existe. Id: " + cobrancaId);
+			log.error("Cobrança em aberto não encontrada para a venda de Id: " + pagamentoRequest.vendaId());
+			
+			PagamentoResponseTO response = new PagamentoResponseTO(pagamentoRequest.pagamentoId(), false, "Cobranças em aberto não encontradas.");
+			rabbitTemplate.convertAndSend(response);
 		}		
 	}
 }

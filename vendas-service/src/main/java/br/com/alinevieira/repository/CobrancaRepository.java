@@ -1,6 +1,7 @@
 package br.com.alinevieira.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,9 @@ import br.com.alinevieira.model.enums.CobrancaStatus;
 @Repository
 public interface CobrancaRepository extends JpaRepository<CobrancaModel, UUID> {
 	
-	List<CobrancaModel> getAllByVendaIdAndStatus(UUID vendaId, CobrancaStatus status); 
+	List<CobrancaModel> getAllByVendaIdAndStatus(UUID vendaId, CobrancaStatus status);
+	
+	Optional<CobrancaModel> findOneByVendaIdAndStatus(UUID vendaId, CobrancaStatus status); 
 	
 	List<CobrancaModel> getAllByVendaId(UUID vendaId);
 }

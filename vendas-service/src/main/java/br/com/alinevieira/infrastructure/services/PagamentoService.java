@@ -21,12 +21,12 @@ public class PagamentoService {
 		this.cobrancaService = cobrancaService;
 	}
 
-	@RabbitListener(queues = Amqp.QUEUE_NAME)
+	@RabbitListener(queues = Amqp.FILA_ENVIO)
     public void receive(final PagamentoRequestTO pagamentoRequest) {
         try {
-        	log.info("Recebida a solicitação de pagamento para:\nVenda: " + pagamentoRequest.vendaId() + "\nCobrança: " + pagamentoRequest.cobrancaId());
+        	log.info("Recebida a solicitação de pagamento para:\nVenda: " + pagamentoRequest.vendaId());
             
-        	cobrancaService.processaPagamento(pagamentoRequest.vendaId(), pagamentoRequest.cobrancaId());            
+        	cobrancaService.processaPagamento(pagamentoRequest);            
             
         } catch (RuntimeException ex) {
             log.error(ex.getMessage());                
