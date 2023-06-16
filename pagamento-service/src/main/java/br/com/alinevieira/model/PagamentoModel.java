@@ -23,6 +23,8 @@ public class PagamentoModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
+	
+	private UUID vendaId;
 	private LocalDateTime dataCriacao;
 	private LocalDateTime dataFinalizacao;
 	private BigDecimal valor;
@@ -34,6 +36,7 @@ public class PagamentoModel implements Serializable {
 	private PagamentoTipo tipo;
 	
 	private String cpfPagador;
+	private String rejeitadoPor;
 	
 	
 	public UUID getId() {
@@ -44,6 +47,14 @@ public class PagamentoModel implements Serializable {
 		this.id = id;
 	}
 	
+	public UUID getVendaId() {
+		return vendaId;
+	}
+
+	public void setVendaId(UUID vendaId) {
+		this.vendaId = vendaId;
+	}
+
 	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}
@@ -91,8 +102,12 @@ public class PagamentoModel implements Serializable {
 	public void setCpfPagador(String cpfPagador) {
 		this.cpfPagador = cpfPagador;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+
+	public String getRejeitadoPor() {
+		return rejeitadoPor;
+	}
+
+	public void setRejeitadoPor(String rejeitadoPor) {
+		this.rejeitadoPor = rejeitadoPor;
 	}
 }
