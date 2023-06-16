@@ -34,7 +34,7 @@ public class CobrancaService {
 		List<VendaModel> vendasEmAberto = vendaRepository.getAllByStatusIn(new VendaStatus[]{VendaStatus.ALTERADA, VendaStatus.CRIADA});
 		
 		for(VendaModel vendaModel : vendasEmAberto) {
-			System.out.println(vendaModel.getId());
+			log.info("Gerando cobrança para venda de Id: " + vendaModel.getId());
 			List<CobrancaModel> cobrancasEmAberto = cobrancaRepository.getAllByVendaIdAndStatus(vendaModel.getId(), CobrancaStatus.EM_ABERTO);
 			
 			for(CobrancaModel cobrancaEmAberto : cobrancasEmAberto) {
