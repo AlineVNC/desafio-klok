@@ -90,6 +90,10 @@ public class VendaController {
 	public ResponseEntity<List<CobrancaResponseDto>> pegarCobrancas(@PathVariable(name = "id") UUID idVenda) {
 		log.info("Consultando histórico de cobranças da venda de Id: " + idVenda);
 		
+		if (!vendaRepository.existsById(idVenda)) {
+			return ResponseEntity.notFound().build();
+		}
+		
 		List<CobrancaModel> cobrancas = cobrancaRepository.getAllByVendaId(idVenda);
 		List<CobrancaResponseDto> cobrancasResponse = new ArrayList<>();
 		for (CobrancaModel cobranca : cobrancas) {
