@@ -15,15 +15,15 @@ public record VendaResponseDto(
 		String cpfComprador,
 		VendaStatus status,
 		LocalDateTime data,
-		List<ItemResponseDto> items,
+		List<ItemResponseDto> itens,
 		BigDecimal total
 		) {
 	
 	public static VendaResponseDto fromModel(VendaModel vendaModel) {
-		List<ItemResponseDto> itemsResponseDto = new ArrayList<>();
-		for (ItemModel itemModel : vendaModel.getItems()) {
+		List<ItemResponseDto> itensResponseDto = new ArrayList<>();
+		for (ItemModel itemModel : vendaModel.getItens()) {
 			ItemResponseDto itemResponseDto = ItemResponseDto.fromModel(itemModel);
-			itemsResponseDto.add(itemResponseDto);
+			itensResponseDto.add(itemResponseDto);
 		}
 		
 		VendaResponseDto vendaResponseDto = new VendaResponseDto(
@@ -31,7 +31,7 @@ public record VendaResponseDto(
 				vendaModel.getCpfComprador(),
 				vendaModel.getStatus(),
 				vendaModel.getData(),
-				itemsResponseDto,
+				itensResponseDto,
 				vendaModel.getTotal()
 				);
 		

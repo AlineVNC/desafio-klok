@@ -47,8 +47,8 @@ public class VendaService {
 		venda.setCpfComprador(vendaDto.cpfComprador());
 		venda = vendaRepository.save(venda);
 		
-		if (vendaDto.items() != null) {
-			for (ItemDto itemDto : vendaDto.items()) {		
+		if (vendaDto.itens() != null) {
+			for (ItemDto itemDto : vendaDto.itens()) {		
 				
 				UUID idProduto = itemDto.produtoId();
 				Optional<ProdutoModel> optProdutoModel = produtoRepository.findById(idProduto);
@@ -69,7 +69,7 @@ public class VendaService {
 					
 					itemModel = itemRepository.save(itemModel);
 					
-					venda.getItems().add(itemModel);					
+					venda.getItens().add(itemModel);					
 				}
 				
 			}

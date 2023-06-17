@@ -33,7 +33,7 @@ public class VendaModel implements Serializable {
 	private VendaStatus status;
 		
 	@OneToMany(mappedBy = "venda")
-	private List<ItemModel> items;
+	private List<ItemModel> itens;
 	
 	@OneToMany(mappedBy = "venda")
 	private List<CobrancaModel> cobrancas;
@@ -41,7 +41,7 @@ public class VendaModel implements Serializable {
 	public VendaModel() {
 		this.data = LocalDateTime.now(); 
 		this.status = VendaStatus.CRIADA;
-		this.items = new ArrayList<>();
+		this.itens = new ArrayList<>();
 		this.cobrancas = new ArrayList<>();
 	}
 	
@@ -69,12 +69,12 @@ public class VendaModel implements Serializable {
 		this.data = data;
 	}
 	
-	public List<ItemModel> getItems() {
-		return items;
+	public List<ItemModel> getItens() {
+		return itens;
 	}
 	
-	public void setItems(List<ItemModel> items) {
-		this.items = items;
+	public void setItens(List<ItemModel> itens) {
+		this.itens = itens;
 	}
 
 	public VendaStatus getStatus() {
@@ -95,7 +95,7 @@ public class VendaModel implements Serializable {
 	
 	public BigDecimal getTotal() {
 		BigDecimal total = new BigDecimal(0);
-		for (ItemModel item : this.items) {
+		for (ItemModel item : this.itens) {
 			BigDecimal itemSubTotal = item.getSubTotal();
 			total = total.add(itemSubTotal);
 		}
