@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record ItemDto(
-		@NotNull UUID produto_id,
+		@NotNull UUID produtoId,
 		@Min(value = 1) int quantidade
 		) {
 

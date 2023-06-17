@@ -62,11 +62,15 @@ public class PagamentoService {
         		PagamentoModel pagamento = optPagamento.get();
         		if (pagamentoResponse.sucesso()) {
         			pagamento.setStatus(PagamentoStatus.FINALIZADO);
+        			pagamento.setDataFinalizacao(LocalDateTime.now());
         			pagamentoRepository.save(pagamento);
+        			log.info("Pagamendo de id: " + pagamentoResponse.pagamentoId() + " finalizado.");
         		} else {
         			pagamento.setStatus(PagamentoStatus.REJEITADO);
+        			pagamento.setDataFinalizacao(LocalDateTime.now());
         			pagamento.setRejeitadoPor(pagamentoResponse.razao());
         			pagamentoRepository.save(pagamento);
+        			log.error("Pagamendo de id: " + pagamentoResponse.pagamentoId() + " rejeitado pelo motivo: " + pagamentoResponse.razao());
         		}
         	} else {
         		log.error("Pagamento não encontrado.");

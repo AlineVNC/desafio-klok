@@ -50,7 +50,7 @@ public class VendaService {
 		if (vendaDto.items() != null) {
 			for (ItemDto itemDto : vendaDto.items()) {		
 				
-				UUID idProduto = itemDto.produto_id();
+				UUID idProduto = itemDto.produtoId();
 				Optional<ProdutoModel> optProdutoModel = produtoRepository.findById(idProduto);
 				
 				if (optProdutoModel.isPresent()) {
@@ -80,13 +80,13 @@ public class VendaService {
 	
 	@Transactional
 	public VendaModel adicionarItem(UUID idVenda, ItemDto itemDto) {
-		log.info("Adicionando item a venda de id: " + idVenda + "\nProduto id: " + itemDto.produto_id() + "\nQuantidade: " + itemDto.quantidade());
+		log.info("Adicionando item a venda de id: " + idVenda + "\nProduto id: " + itemDto.produtoId() + "\nQuantidade: " + itemDto.quantidade());
 		Optional<VendaModel> optionalVenda = vendaRepository.findById(idVenda);
-		Optional<ProdutoModel> optionalProduto = produtoRepository.findById(itemDto.produto_id());
+		Optional<ProdutoModel> optionalProduto = produtoRepository.findById(itemDto.produtoId());
 		if(optionalVenda.isPresent() && optionalProduto.isPresent()) {
 			VendaModel venda = optionalVenda.get();
 			ProdutoModel produto = optionalProduto.get();
-			ItemModel item = new ItemModel();
+			ItemModel item = new ItemModel();			
 			item.setPrecoPraticado(produto.getPreco());
 			item.setProduto(produto);
 			item.setVenda(venda);
