@@ -47,23 +47,14 @@ services:
 
   vendas-service:
     container_name: vendas-service
-    image: openjdk:17-alpine
-    ports:
-      - "8010:8080"
+    build:
+      context: ./../vendas-service
     environment:
       REGISTRY_PREFER_IP: 'true'
       APPLICATION_NAME: vendas-service
       SPRING_PROFILES_ACTIVE: 'prod'
-    command: 
-      - /bin/sh
-      - -c
-      - |
-        cd /services/vendas-service
-        ./mvnw clean
-        ./mvnw install
-        java -Duser.timezone=GMT-03:00 -Xmx256m -Xmx184m -jar ./target/vendas-service.jar
-    volumes:
-      - ./../vendas-service:/services/vendas-service
+    ports:
+      - "8010:8080"
     networks:
       - padrao
     links:
@@ -72,23 +63,14 @@ services:
 
   pagamento-service:
     container_name: pagamento-service
-    image: openjdk:17-alpine
-    ports:
-      - "8020:8080"
+    build:
+      context: ./../pagamento-service    
     environment:
       REGISTRY_PREFER_IP: 'true'
       APPLICATION_NAME: pagamento-service
       SPRING_PROFILES_ACTIVE: 'prod'
-    command:
-      - /bin/sh
-      - -c
-      - |
-        cd /services/pagamento-service
-        ./mvnw clean
-        ./mvnw install
-        java -Duser.timezone=GMT-03:00 -Xmx256m -Xmx184m -jar ./target/pagamento-service.jar
-    volumes:
-      - ./../pagamento-service:/services/pagamento-service
+    ports:
+      - "8020:8080"
     networks:
       - padrao
     links:
