@@ -33,7 +33,7 @@ import br.com.alinevieira.services.VendaService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/vendas")
+@RequestMapping(path = "/api/vendas")
 public class VendaController {	
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 

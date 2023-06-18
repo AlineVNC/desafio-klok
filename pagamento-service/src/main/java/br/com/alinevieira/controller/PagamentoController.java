@@ -24,7 +24,7 @@ import br.com.alinevieira.services.PagamentoService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/pagamentos")
+@RequestMapping(path = "/api/pagamentos")
 public class PagamentoController {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	

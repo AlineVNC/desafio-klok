@@ -12,6 +12,7 @@ import br.com.alinevieira.model.ProdutoModel;
 import br.com.alinevieira.repository.ProdutoRepository;
 
 @RestController
+@RequestMapping(path = "/api/produtos")
 public class ProdutoController {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
@@ -21,7 +22,7 @@ public class ProdutoController {
 		this.produtoRepository = produtoRepository;
 	}
 	
-	@GetMapping("/produtos")
+	@GetMapping
 	public ResponseEntity<List<ProdutoModel>> pegaProduto() {
 		log.info("Listando produtos...");
 		List<ProdutoModel> listaProduto = produtoRepository.findAll();
