@@ -43,6 +43,8 @@ Para os serviços implementados, foram utilizados:
 * [Adicionar Item na Venda](docs/vendas/pages/adicionar_item.md) : `POST /api/vendas/:idVenda/items/`
 * [Alterar Quantidade de Item](docs/vendas/pages/alterar_quantidade.md) : `PATCH /api/vendas/:idVenda/itens/:idItem`
 * [Apagar Venda](docs/vendas/pages/apagar_venda.md) : `GET /api/vendas/:id`
+* [Buiscar Histórico de Cobranças](docs/vendas/pages/listar_cobrancas.md) : `GET /api/vendas/:id/cobrancas`
+* [Listar Produtos](docs/vendas/pages/listar_produtos.md) : `GET /api/produtos`
 
 
 ### Pagamento Service
