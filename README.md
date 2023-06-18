@@ -10,6 +10,10 @@
     - [Pagamento Service](#pagamento-service)
       - [Esquema](#esquema-1)
       - [Endpoints](#endpoints-1)
+  - [Rodando Localmente](#rodando-localmente)
+    - [Requisitos](#requisitos)
+    - [Rodando](#rodando)
+  - [Próximos desafios (Ou requisitos não contemplados)](#próximos-desafios-ou-requisitos-não-contemplados)
 
 ## Sobre o projeto
 
@@ -36,6 +40,12 @@ Para os serviços implementados, foram utilizados:
 ### Vendas Service
 #### Esquema
 
+<div align="center">
+  <br><br>
+  <img width="80%" src="docs/vendas/imgs/esquema_venda.drawio.png">
+  <br><br>
+</div>
+
 #### Endpoints
 * [Listar Vendas](docs/vendas/pages/listar_vendas.md) : `GET /api/vendas/`
 * [Buscar Venda](docs/vendas/pages/buscar_venda.md) : `GET /api/vendas/:id`
@@ -50,7 +60,35 @@ Para os serviços implementados, foram utilizados:
 ### Pagamento Service
 #### Esquema
 
+<div align="center">
+  <br><br>
+  <img width="80%" src="docs/pagamento/imgs/esquema_pagamento.drawio.png">
+  <br><br>
+</div>
+
 #### Endpoints
 * [Listar Pagamentos](docs/pagamento/pages/listar_pagamentos.md) : `GET /api/pagamentos/`
 * [Buscar Pagamento](docs/pagamento/pages/buscar_pagamento.md) : `GET /api/pagamentos/:id`
 * [Lancar Pagamento](docs/pagamento/pages/lancar_pagamento.md) : `POST /api/pagamentos/`
+
+## Rodando Localmente
+### Requisitos
+
+- Docker ~> v20.10
+- Docker Compose ~> v1.29
+
+### Rodando
+
+A partir da linha de comando:
+
+  1. Clonar este repositório: `$ git clone git@github.com:AlineVNC/desafio-klok.git`
+  2. Acessar diretório "infra" dentro da pasta do projeto: `$ cd desafio-klok/infra`
+  3. Rodar receita de docker-compose contida no diretório: `$ docker-compose up`
+
+- Vendas API estará exposta na porta: 8010.
+- Pagamento API estará exposta na porta: 8020.
+  
+## Próximos desafios (Ou requisitos não contemplados)
+- Autenticação por JWT
+- Testes Unitários
+- Api Gateway

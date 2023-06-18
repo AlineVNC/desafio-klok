@@ -2,5 +2,5 @@ package br.com.alinevieira.model.enums;
 
 public enum PagamentoTipo {
 
-	DEBITO, CREDITO, DEPOSITO, TRANSFERENCIA, PIX
+	PIX, DEPOSITO, DINHEIRO, TRANSFERENCIA, CREDITO, DEBITO
 }
