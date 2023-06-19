@@ -113,7 +113,11 @@ public class VendaService {
 			
 			if(!item.getVenda().getId().equals(idVenda)) {
 				throw new BadRequestException("Item não pertence a esta venda.");
-			}			
+			}		
+			
+			VendaModel venda  = item.getVenda();
+			venda.setStatus(VendaStatus.ALTERADA);
+			venda = vendaRepository.save(venda);
 			
 			item.setQuantidade(quantidadeDto.quantidade());
 			item = itemRepository.save(item);
